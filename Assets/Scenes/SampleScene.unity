@@ -336,7 +336,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1005518402}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -402,9 +402,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1eb2b651b54e42f4fbc901d3e0ee2d42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Col: {fileID: 1005518403}
   FindPath: 0
-  StartNode: {x: 1, y: 1}
-  EndNode: {x: 25, y: 25}
+  RefreshMap: 0
+  Col: {fileID: 1005518403}
+  StartNode: {x: 25, y: 45}
+  EndNode: {x: 39, y: 25}
   LastPath: []
   Size: {x: 50, y: 50}
+  edgeDivider: 0.1
+  _generators:
+  - Area:
+      x: 20
+      y: 15
+      width: 20
+      height: 2
+  - Area:
+      x: 11
+      y: 0
+      width: 4
+      height: 20
+  - Area:
+      x: 11
+      y: 20
+      width: 4
+      height: 20
+  - Area:
+      x: 15
+      y: 40
+      width: 30
+      height: 3
+  - Area:
+      x: 40
+      y: 15
+      width: 2
+      height: 25
