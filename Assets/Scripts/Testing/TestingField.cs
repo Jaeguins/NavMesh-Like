@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Assets.Scripts.GridNav.Astar;
 using Assets.Scripts.GridNav.NodeOptimizer;
@@ -21,7 +19,7 @@ namespace Assets.Scripts.Testing {
             }
             return OptimizedRuntimeNodes[id];
         }
-        public bool Possible(Vector2Int pos) => Possible((Vector2)pos);
+        public bool Possible(Vector2 pos) => Possible(new Vector2Int((int)pos.x, (int)pos.y));
         public Vector2 GenerateGroup(TestingNode start, TestingNode end) {
             return ((Vector2) (start.Id - end.Id)).normalized;
         }
@@ -33,8 +31,8 @@ namespace Assets.Scripts.Testing {
         public Vector2 InverseGroup(Vector2 group) {
             return -group;
         }
-        public bool Possible(Vector2 pos) {
-            if(!new RectInt(Vector2Int.zero,Size).Contains(new Vector2Int((int)pos.x,(int)pos.y)))return false;
+        public bool Possible(Vector2Int pos) {
+            if(!new RectInt(Vector2Int.zero,Size).Contains(pos))return false;
             foreach (var t in _generators) {
                 if (pos.x <= t.Area.xMax && pos.x >= t.Area.xMin && pos.y >= t.Area.yMin && pos.y <= t.Area.yMax) return false;
             }
@@ -173,11 +171,11 @@ namespace Assets.Scripts.Testing {
             return ret;
         }
 
-        public float GetCost(Vector2Int id, Vector2Int other) {
-            return Vector2Int.Distance(id, other);
+        public float GetCost(Vector2Int from, Vector2Int to) {
+            return Vector2Int.Distance(from, to);
         }
-        public float GetHeuristic(Vector2Int id, Vector2Int target) {
-            return Vector2Int.Distance(id, target);
+        public float GetHeuristic(Vector2Int from, Vector2Int target) {
+            return Vector2Int.Distance(from, target);
         }
 
 #endregion
