@@ -33,7 +33,7 @@ namespace Assets.Scripts.GridNav.NodeOptimizer {
         /// <summary>
         /// 최적화된 노드 그래프
         /// </summary>
-        Dictionary<TIdClass, TNode> OptimizedRuntimeNodes { get; set; }
+        Dictionary<TIdClass, TNode> OptimizedRuntimeNodes { get; }
         /// <summary>
         /// 간선 연결 가능성 판단
         /// </summary>

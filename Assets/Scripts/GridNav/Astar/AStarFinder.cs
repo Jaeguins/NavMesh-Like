@@ -132,7 +132,7 @@ namespace Assets.Scripts.GridNav.Astar {
             /// <summary>
             /// 이웃
             /// </summary>
-            internal List<TIdClass> Neighbors;
+            internal List<TIdClass> Neighbors=new List<TIdClass>();
             /// <summary>
             /// 종합 노드 판단 기준 도출
             /// </summary>

@@ -218,8 +218,7 @@ namespace Assets.Scripts.Testing {
         public AStarFinder<Vector2Int>.AstarNodeRuntime ToRuntimeNode() {
             AStarFinder<Vector2Int>.AstarNodeRuntime ret = new AStarFinder<Vector2Int>.AstarNodeRuntime() {
                 Id = Id,
-                GoodToBePath = GoodToBePath,
-                Neighbors = new List<Vector2Int>()
+                GoodToBePath = GoodToBePath
             };
             foreach (var t in Neighbors) {
                 ret.Neighbors.Add(t);
