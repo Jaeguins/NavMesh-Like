@@ -114,6 +114,10 @@ namespace Assets.Scripts.Testing.ProvisTesting {
             foreach (var t in Furnitures) {
                 Gizmos.DrawCube(new Vector3(t.Area.center.x, 0, t.Area.center.y), new Vector3(t.Area.size.x,0,t.Area.size.y));
             }
+            Gizmos.matrix=Matrix4x4.identity;
+        }
+        public void DrawMap() {
+            Gizmos.matrix = transform.localToWorldMatrix;
             
             foreach (var t in OptimizedRuntimeNodes.Values) {
                 Gizmos.color = Color.blue;

@@ -7,13 +7,14 @@ using Assets.Scripts.GridNav.NodeOptimizer;
 using JetBrains.Annotations;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets.Scripts.Testing.ProvisTesting {
 
     public class ProvisIsland : MonoBehaviour, IAStarGraph<int>, IPoiManager<int, int, ProvisIslandNode, ProvisGrid> {
 #region Implementation of IAStarGraph<int>
 
-        public object TicketLock { get; }=new object();
+        public object TicketLock { get; } = new object();
         public int Ticket { get; set; } = 0;
         public float GetCost(int @from, int to) {
             return Vector3.Distance(Grids[from].transform.position, Grids[to].transform.position) + Grids[to].Size.magnitude;
@@ -40,7 +41,7 @@ namespace Assets.Scripts.Testing.ProvisTesting {
 
 #region Implementation of IPoiManager<int,int,ProvisIslandNode,IPoiGenerator<int,int,ProvisIslandNode>>
 
-        public List<ProvisGrid> Generators => null;
+        public List<ProvisGrid> Generators => Grids.Values.ToList();
         public List<ProvisIslandNode> SpecialNodes { get; }
         public Dictionary<int, ProvisIslandNode> OptimizedRuntimeNodes { get; set; } = new Dictionary<int, ProvisIslandNode>();
 
@@ -80,26 +81,43 @@ namespace Assets.Scripts.Testing.ProvisTesting {
             }
         }
         public void OnDrawGizmos() {
-            Gizmos.color = Color.green;
-            foreach (var p in portals) {
-                if (p.GridA == null || p.GridB == null) continue;
-                Gizmos.matrix = p.GridA.transform.localToWorldMatrix;
-                Gizmos.DrawWireCube(new Vector3(p.CoordA.x, .1f, p.CoordA.y), Vector3.one * .95f);
-                Gizmos.matrix = Matrix4x4.identity;
-                Gizmos.matrix = p.GridB.transform.localToWorldMatrix;
-                Gizmos.DrawWireCube(new Vector3(p.CoordB.x, .1f, p.CoordB.y), Vector3.one * .95f);
-                Gizmos.matrix = Matrix4x4.identity;
-                Gizmos.DrawLine(p.GridA.transform.TransformPoint(new Vector3(p.CoordA.x, 0, p.CoordA.y)), p.GridB.transform.TransformPoint(new Vector3(p.CoordB.x, 0, p.CoordB.y)));
-            }
+            if (DrawJumpPoint) {
+                Gizmos.color = Color.green;
 
-            foreach (var t in OptimizedRuntimeNodes.Values) {
-                Gizmos.color = Color.white;
-                ProvisGrid grid = Grids[t.Id];
-                Gizmos.DrawSphere(grid.transform.position, 1);
+                foreach (var p in portals) {
+                    if (p.GridA == null || p.GridB == null) continue;
+                    Gizmos.matrix = p.GridA.transform.localToWorldMatrix;
+                    Gizmos.DrawWireCube(new Vector3(p.CoordA.x, .1f, p.CoordA.y), Vector3.one * .95f);
+                    Gizmos.matrix = Matrix4x4.identity;
+                    Gizmos.matrix = p.GridB.transform.localToWorldMatrix;
+                    Gizmos.DrawWireCube(new Vector3(p.CoordB.x, .1f, p.CoordB.y), Vector3.one * .95f);
+                    Gizmos.matrix = Matrix4x4.identity;
+                    Gizmos.DrawLine(p.GridA.transform.TransformPoint(new Vector3(p.CoordA.x, 0, p.CoordA.y)), p.GridB.transform.TransformPoint(new Vector3(p.CoordB.x, 0, p.CoordB.y)));
+                }
             }
+            if (DrawGridMap) {
+
+                foreach (var t in Grids.Values) {
+                    t.DrawMap();
+                }
+            }
+            if (DrawPath) {
+                Gizmos.color = Color.cyan;
+                for (int i = 0; i < LastPath.Count - 1; i++) {
+                    Vector3 from = Grids[LastPath[i].GridId].transform.TransformPoint(new Vector3(LastPath[i].Coord.x, 1, LastPath[i].Coord.y)),
+                            to = Grids[LastPath[i + 1].GridId].transform.TransformPoint(new Vector3(LastPath[i + 1].Coord.x, 1, LastPath[i + 1].Coord.y));
+                    Gizmos.DrawLine(from, to);
+                }
+            }
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawSphere(PathInfo.GridA.transform.TransformPoint(new Vector3(PathInfo.CoordA.x, 1, PathInfo.CoordA.y)), 1);
+            Gizmos.DrawSphere(PathInfo.GridB.transform.TransformPoint(new Vector3(PathInfo.CoordB.x, 1, PathInfo.CoordB.y)), 1);
         }
         public bool Refresh;
         public bool FindPath;
+        public bool DrawGridMap,
+                    DrawJumpPoint,
+                    DrawPath;
         public GridCoordPair PathInfo;
         public List<GridCoord> LastPath = new List<GridCoord>();
         public void Update() {
@@ -125,9 +143,6 @@ namespace Assets.Scripts.Testing.ProvisTesting {
                 Debug.LogError(e);
             }
         }
-        private void RefreshInternal() {
-            OptimizedRuntimeNodes = PoiNodeManage<int, int, ProvisIslandNode, ProvisGrid>.BakeOptimized(this);
-        }
         public async Task FindingPathAsync() {
             LastPath.Clear();
             try {
@@ -145,15 +160,17 @@ namespace Assets.Scripts.Testing.ProvisTesting {
                 for (int i = 0; i < gridWays.Count; i++) {
                     int nowGrid = gridWays[i],
                         nextGrid = i == gridWays.Count - 1 ? -1 : gridWays[i + 1];
-                    GridCoordPair toNextPortal = GetNeighborPortal(nowGrid, nextGrid).First();
-                    innerGridPathTask[i] = toNextPortal.GridA.FindPathAsync(lastPoint.Coord, i == gridWays.Count - 1 ? toNextPortal.CoordA : PathInfo.CoordB);
+                    var tempNeighbors = GetNeighborPortal(nowGrid, nextGrid);
+                    GridCoordPair toNextPortal = tempNeighbors[Random.Range(0,tempNeighbors.Count)];
+                    innerGridPathTask[i] = toNextPortal.GridA.FindPathAsync(lastPoint.Coord, (i != (gridWays.Count - 1)) ? toNextPortal.CoordA : PathInfo.CoordB);
+                    lastPoint=new GridCoord{Coord=toNextPortal.CoordB,GridId = toNextPortal.GridB.Id};
                 }
-                for (int i = 0; i < gridWays.Count; i++) {
-                    Stack<Vector2Int> innerGridPath = await innerGridPathTask[i];
+                for (int j = 0; j < gridWays.Count; j++) {
+                    Stack<Vector2Int> innerGridPath = await innerGridPathTask[j];
                     while (innerGridPath.Count > 0) {
                         LastPath.Add(new GridCoord() {
                             Coord = innerGridPath.Pop(),
-                            GridId = gridWays[i]
+                            GridId = gridWays[j]
                         });
                     }
                 }

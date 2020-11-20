@@ -419,27 +419,38 @@ MonoBehaviour:
   portals:
   - GridA: {fileID: 1890248064}
     GridB: {fileID: 474184793}
-    CoordA: {x: 3, y: -7}
-    CoordB: {x: -3, y: 0}
+    CoordA: {x: -3, y: -20}
+    CoordB: {x: -12, y: 0}
   - GridA: {fileID: 474184793}
     GridB: {fileID: 727166867}
-    CoordA: {x: 13, y: 7}
-    CoordB: {x: 1, y: 4}
+    CoordA: {x: 12, y: 10}
+    CoordB: {x: 12, y: -6}
   - GridA: {fileID: 727166867}
     GridB: {fileID: 469703681}
-    CoordA: {x: 5, y: 6}
-    CoordB: {x: 10, y: 2}
+    CoordA: {x: -13, y: 9}
+    CoordB: {x: 10, y: 9}
   - GridA: {fileID: 469703681}
     GridB: {fileID: 1890248064}
-    CoordA: {x: -3, y: 1}
-    CoordB: {x: 3, y: 9}
+    CoordA: {x: -10, y: -10}
+    CoordB: {x: -38, y: 9}
+  - GridA: {fileID: 1890248064}
+    GridB: {fileID: 469703681}
+    CoordA: {x: -27, y: 0}
+    CoordB: {x: -7, y: -11}
+  - GridA: {fileID: 1890248064}
+    GridB: {fileID: 469703681}
+    CoordA: {x: -14, y: 0}
+    CoordB: {x: 5, y: -12}
   Refresh: 0
   FindPath: 0
+  DrawGridMap: 0
+  DrawJumpPoint: 1
+  DrawPath: 0
   PathInfo:
-    GridA: {fileID: 0}
-    GridB: {fileID: 0}
-    CoordA: {x: 0, y: 0}
-    CoordB: {x: 0, y: 0}
+    GridA: {fileID: 1890248064}
+    GridB: {fileID: 1890248064}
+    CoordA: {x: -40, y: -7}
+    CoordB: {x: -1, y: -9}
   LastPath: []
 --- !u!1 &1817381169
 GameObject:
@@ -549,7 +560,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1890248062}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 20, y: 0, z: 20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1795632889}
@@ -575,4 +586,4 @@ MonoBehaviour:
       y: 0
       width: 10
       height: 4
-  Size: {x: 30, y: 30}
+  Size: {x: 90, y: 90}

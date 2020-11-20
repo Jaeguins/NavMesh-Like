@@ -23,7 +23,8 @@ namespace Assets.Scripts.Testing.ProvisTesting {
 
         public AStarFinder<int>.AstarNodeRuntime ToRuntime() {
             AStarFinder<int>.AstarNodeRuntime ret = new AStarFinder<int>.AstarNodeRuntime {
-                Id = Id
+                Id = Id,
+                GoodToBePath = true
             };
             foreach (var t in Neighbor) {
                 ret.Neighbors.Add(t);
